@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import {NavController, NavParams, AlertController, LoadingController} from 'ionic-angular';
-import {Firebase} from "../../providers/firebase";
-
+import { NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
+import { Firebase } from '../../providers/firebase';
+import { Camera } from '@ionic-native/camera';
 /*
   Generated class for the Confirmchoice page.
 
@@ -13,28 +13,31 @@ import {Firebase} from "../../providers/firebase";
   templateUrl: 'confirmchoice.html'
 })
 export class ConfirmchoicePage {
-  address:any;
-  quantity:number=0;
-  choice:any={};
-  flavour:any;
-  photofrost:any="without";// for with or without additions
-  comments:any;
-  constructor(public loadingCtrl:LoadingController,public firebase:Firebase,public alertCtrl:AlertController,public navCtrl: NavController, public navParams: NavParams) {
-    this.choice=this.navParams.get('choice');
-    this.quantity=1;
-    //display the choice on html and add additional fields
+  address: any;
+  quantity = 0;
+  choice = { name: null };
+  flavour: any;
+  photofrost = 'without'; // for with or without additions
+  picture = null;
+  phone = null;
+  comments: any;
+  addpicimg = 'assets/addpic.png';
+  
+  constructor(public loadingCtrl:LoadingController,
+              public firebase:Firebase,
+              public camera: Camera,
+              public alertCtrl: AlertController,
+              public navCtrl: NavController,
+              public navParams: NavParams
+            ) {
+    this.choice = this.navParams.get('choice');
+    this.quantity = 1;
   }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ConfirmchoicePage');
-  }
-
   addQuantity(){
     this.quantity++;
-    console.log(this.quantity);
   }
   reduceQuantity(){
-    if(this.quantity>1){
+    if (this.quantity > 1) {
       this.quantity--;
     }
   }
@@ -49,10 +52,9 @@ export class ConfirmchoicePage {
     this.photofrost;
     this.address;
     */
-
     let prompt = this.alertCtrl.create({
       title: 'Confirm Order',
-      message: "Enter name for delivery",
+      message: '(Orders cannot be modified later) Enter receiver name',
       inputs: [
         {
           name: 'title',
@@ -63,22 +65,18 @@ export class ConfirmchoicePage {
         {
           text: 'Cancel',
           handler: data => {
-            console.log('Cancel clicked');
           }
         },
         {
-          text: 'Submit',
+          text: 'Submit Order',
           handler: data => {
-            console.log('Saved clicked');
-            var deliveryname=data.title;
+            var deliveryname = data.title;
             let loader = this.loadingCtrl.create({
-              content: "Please wait..."
+              content: 'Please wait...'
             });
             loader.present();
-            //now send all data to server
-            this.firebase.addOrder(this.choice.name, deliveryname,this.quantity, this.photofrost,this.comments, this.address).subscribe(
-              data=>{
-                console.log("Data successfully sent to firebase");
+            this.firebase.addOrder(this.choice.name, deliveryname, this.quantity, this.photofrost, this.comments, this.address, this.picture, this.phone).then(
+              data => {
                 loader.dismiss();
 
                 let alert = this.alertCtrl.create({
@@ -88,8 +86,8 @@ export class ConfirmchoicePage {
                 });
                 alert.present();
               },
-              err=>{
-                console.log("Error sending data to firebase");
+              err => {
+                console.log('Error sending data to firebase');
                 loader.dismiss();
                 let alert = this.alertCtrl.create({
                   title: 'Error!',
@@ -105,6 +103,23 @@ export class ConfirmchoicePage {
       ]
     });
     prompt.present();
+  }
+  addPic(){
+    var cameraOptions = {
+      quality: 50,
+      destinationType: 0,
+      sourceType: 0,
+      allowEdit: false,
+      encodingType: 1,
+      targetWidth: 200,
+      targetHeight: 200,
+      correctOrientation: true,
+      saveToPhotoAlbum: false
+    };
+    this.camera.getPicture(cameraOptions).then((imageData) => {
+      const pic = 'data:image/jpeg;base64,' + imageData;
+      this.picture = pic;
+    });
   }
 
 }

@@ -14,9 +14,7 @@
 
 
 <ion-content padding>
-  <div style="margin-bottom: 3%;" [(innerHTML)]="cake.description"></div>
-
-  <ion-list>
+    <ion-list>
     <ion-item *ngFor="let type of cakeTypes" (click)="selectChoice(type)">
       <ion-thumbnail item-left>
         <img src={{type.image}}>
@@ -24,8 +22,10 @@
       <h2>{{type.name}}</h2>
       <p>{{type.shapeornum}}</p>
       <p>{{type.price}}</p>
-      <ion-icon item-right name="add-circle"></ion-icon>
+      <ion-icon style="color:grey" item-right name="add-circle"></ion-icon>
     </ion-item>
   </ion-list>
+
+  <!-- <ion-card style="color: darkslategrey;" padding [(innerHTML)]="cake.description"></ion-card> -->
 
 </ion-content>

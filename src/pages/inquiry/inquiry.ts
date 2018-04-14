@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import {NavController, NavParams, ToastController, LoadingController, AlertController} from 'ionic-angular';
-import { Camera } from 'ionic-native';
-import {Firebase} from "../../providers/firebase";
+import { NavController, NavParams, ToastController, LoadingController, AlertController } from 'ionic-angular';
+import { Camera } from '@ionic-native/camera';
+import { Firebase } from '../../providers/firebase';
 
 /*
   Generated class for the Inquiry page.
@@ -14,14 +14,20 @@ import {Firebase} from "../../providers/firebase";
   templateUrl: 'inquiry.html'
 })
 export class InquiryPage {
-  name:string='';
-  email:string='';
-  phone:string='';
-  message:string='';
-  pictures:any=[];
-  addpicimg:any="assets/addpic.png";
+  name = '';
+  email = '';
+  phone = '';
+  message = '';
+  pictures = [];
+  addpicimg = "assets/addpic.png";
 
-  constructor(public alertCtrl:AlertController,public loadingCtrl:LoadingController,public firebase:Firebase,public toastCtrl:ToastController,public navCtrl: NavController, public navParams: NavParams) {}
+  constructor(public alertCtrl:AlertController,
+              public loadingCtrl:LoadingController,
+              public camera: Camera,
+              public firebase:Firebase,
+              public toastCtrl:ToastController,
+              public navCtrl: NavController,
+              public navParams: NavParams) {}
 
 
   ionViewDidLoad() {
@@ -31,22 +37,17 @@ export class InquiryPage {
     var cameraOptions = {
       quality: 50,
       destinationType: 0,
-      sourceType: 1,
-      allowEdit: true,
+      sourceType: 0,
+      allowEdit: false,
       encodingType: 1,
       targetWidth: 200,
       targetHeight: 200,
       correctOrientation: true,
-      saveToPhotoAlbum: true
+      saveToPhotoAlbum: false
     };
-    Camera.getPicture(cameraOptions).then((imageData) => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64:
-      var pic = 'data:image/jpeg;base64,' + imageData;
-      //add this pic to the array of pictures
+    this.camera.getPicture(cameraOptions).then((imageData) => {
+      const pic = 'data:image/jpeg;base64,' + imageData;
       this.pictures.push(pic);
-    }, (err) => {
-      // Handle error
     });
   }
   submitInquiry(){
@@ -59,7 +60,7 @@ export class InquiryPage {
 
     //first check for empty fields
 
-    if(this.name.length<2){
+    if (this.name.length < 2) {
       let toast = this.toastCtrl.create({
         message: 'Enter a valid name',
         duration: 3000
@@ -68,18 +69,18 @@ export class InquiryPage {
       return;
     }
 
-    var emailregex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailregex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     //console.log(emailregex.test(this.data.Email));
-    if(!emailregex.test(this.email)){
+    if (!emailregex.test(this.email)) {
       let toast5 = this.toastCtrl.create({
         message: 'Enter a valid email address',
         duration: 3000
       });
       toast5.present();
-      return null;
+      return;
     }
 
-    if(this.phone.length<4){
+    if (this.phone.length < 4) {
       let toast = this.toastCtrl.create({
         message: 'Enter a valid phone number',
         duration: 3000
@@ -91,8 +92,8 @@ export class InquiryPage {
       content: "Please wait..."
     });
     loader.present();
-    this.firebase.addInquiry(this.name,this.email,this.phone,this.message,this.pictures).subscribe(
-      data=>{
+    this.firebase.addInquiry(this.name, this.email, this.phone, this.message,this.pictures).then(
+      data => {
         console.log("Data successfully sent to firebase");
         loader.dismiss();
         let alert = this.alertCtrl.create({
@@ -102,7 +103,7 @@ export class InquiryPage {
         });
         alert.present();
       },
-      err=>{
+      err => {
         console.log("Error sending data to firebase");
         loader.dismiss();
         let alert = this.alertCtrl.create({
@@ -115,5 +116,4 @@ export class InquiryPage {
     );
 
   }
-
 }

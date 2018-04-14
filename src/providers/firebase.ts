@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Http, RequestOptions, Headers, Response} from '@angular/http';
-import 'rxjs/add/operator/map';
-import {Observable} from "rxjs";
+import * as firebase from 'firebase';
 
 /*
   Generated class for the Firebase provider.
@@ -11,43 +9,42 @@ import {Observable} from "rxjs";
 */
 @Injectable()
 export class Firebase {
-
-  constructor(public http: Http) {
-    console.log('Hello Firebase Provider');
+  firebaseDb: any;
+  constructor() {
+    const config = {
+      apiKey: "AIzaSyBL6OsvCV-I_4rQvWpAZ4bu8uJHMU-jlKk",
+      authDomain: "crystals-a635c.firebaseapp.com",
+      databaseURL: "https://crystals-a635c.firebaseio.com",
+      projectId: "crystals-a635c",
+      storageBucket: "crystals-a635c.appspot.com",
+      messagingSenderId: "749233278402"
+    };
+    firebase.initializeApp(config);
+    this.firebaseDb = firebase.database();
   }
-
-  addInquiry(name,email,phone,message,photos): Observable<Response> {
-
-    let body={
-      name: name,
+  
+  addInquiry(name, email, phone, message, photos): Promise<any> {
+    return this.firebaseDb.ref('inquiry/').set({
+      username: name,
       email: email,
-      phone:phone,
-      message: message,
+      phone: phone,
       photos: photos
-    };
-    let headers = new Headers({ 'Content-Type': 'application/json' }); // ... Set content type to JSON
-    let options = new RequestOptions({ headers: headers }); // Create a request option
-    let url ='https://crystalcakes-420e4.firebaseio.com/inquiry/'+name+'.json';
-    return this.http.put(url, body, options) // ...using post request
-      .map((res:Response) => res.json()) // ...and calling .json() on the response to return data
-      .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    });
   }
-  addOrder(itemname, deliveryname,quantity,photofrost,comments,address): Observable<Response> {
-
-    let body={
-      itemname:itemname,
-      deliveryname:deliveryname,
-      quantity:quantity,
+  addOrder(itemname, deliveryname, quantity, photofrost, comments, address, picture, phone): Promise<any> {
+    const currentTime = Date.now();
+    return this.firebaseDb.ref('orders/' + currentTime).set({
+      itemname: itemname,
+      deliveryname: deliveryname,
+      quantity: quantity,
       photofrost: photofrost,
-      comments:comments,
-      address: address
-    };
-    let headers = new Headers({ 'Content-Type': 'application/json' }); // ... Set content type to JSON
-    let options = new RequestOptions({ headers: headers }); // Create a request option
-    let url ='https://crystalcakes-420e4.firebaseio.com/orders/'+itemname+'-'+deliveryname+'.json';
-    return this.http.put(url, body, options) // ...using post request
-      .map((res:Response) => res.json()) // ...and calling .json() on the response to return data
-      .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+      comments: comments,
+      address: address,
+      picture: picture,
+      phone: phone
+    });
   }
-
+  getCakes() {
+    return this.firebaseDb.ref('/cakes').once('value');
+  }
 }

@@ -1,19 +1,17 @@
 <ion-header>
-
   <ion-navbar>
     <ion-title>{{choice.name}}</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 
 <ion-content>
   <img src={{choice.image}} style="max-height: 70%; width: 100%; padding-bottom: 2%;">
-  <section style="padding: 16px;">
+  <section style="padding: 16px; color: darkslategrey;">
     <div>
-      <h2>{{choice.name}}</h2>
-      <h3>{{choice.price}}</h3>
-      <h4>{{choice.shapeornum}}</h4>
+      <h3>{{choice.name}}</h3>
+      <h4>{{choice.price}}</h4>
+      <h5>{{choice.shapeornum}}</h5>
     </div>
     <hr>
 
@@ -22,18 +20,22 @@
       <ion-item>
         <ion-label>Quantity</ion-label>
         <ion-input type="text" disabled style="opacity: 1" value="{{quantity}}"></ion-input>
-        <button ion-button item-right (click)="addQuantity()"><ion-icon name="add" large></ion-icon></button>
-        <button ion-button item-right (click)="reduceQuantity()"><ion-icon name="remove" large></ion-icon></button>
+        <button ion-button color="light" item-right (click)="addQuantity()"><ion-icon name="add" style="color: darkslategrey;" large></ion-icon></button>
+        <button ion-button color="light" item-right (click)="reduceQuantity()"><ion-icon name="remove" style="color: darkslategrey;" large></ion-icon></button>
       </ion-item>
 
       <ion-item>
         <ion-label stacked>Photofrost</ion-label>
         <ion-select [(ngModel)]="photofrost" multiple="false" cancelText="Cancel" okText="Okay">
-          <ion-option value="without" checked="true">without</ion-option>
-          <ion-option value="with">with</ion-option>
+          <ion-option value="without" checked="true">No</ion-option>
+          <ion-option value="with">Yes</ion-option>
         </ion-select>
       </ion-item>
-
+      <ion-item *ngIf="photofrost === 'with'">
+        <img [src]="picture" *ngIf="picture"/>
+        <img [src]="addpicimg" style="max-width: 15%; max-height:15%;" (click)="addPic()" *ngIf="!picture" />
+      </ion-item>
+      
       <ion-item>
         <ion-label stacked>Comments</ion-label>
         <ion-textarea placeholder="" [(ngModel)]="comments"></ion-textarea>
@@ -43,10 +45,13 @@
         <ion-label stacked>Delievery Address</ion-label>
         <ion-textarea placeholder="" [(ngModel)]="address"></ion-textarea>
       </ion-item>
-
+      <ion-item>
+        <ion-label stacked>Phone</ion-label>
+        <ion-input type="text" value="" [(ngModel)]="phone"></ion-input>
+      </ion-item>
 
     </ion-list>
-    <button ion-button block (click)="submitOrder()">Submit Order</button>
+    <button ion-button color="light" block (click)="submitOrder()">Submit Order</button>
   </section>
 
 </ion-content>

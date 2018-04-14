@@ -1,6 +1,10 @@
 page-confirmchoice {
   .text-input[disabled]{
-    opacity: 1;
+    // opacity: 1;
+  }
+  .item-md .item-button{
+    height: 40px;
+    font-size: 2rem;
   }
 
 }

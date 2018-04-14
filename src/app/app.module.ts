@@ -4,13 +4,17 @@ import { MyApp } from './app.component';
 import { AboutPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
 import { TabsPage } from '../pages/tabs/tabs';
-import {DelieveryPage} from "../pages/delievery/delievery";
-import {InquiryPage} from "../pages/inquiry/inquiry";
-import {CaketypesPage} from "../pages/caketypes/caketypes";
-import {ConfirmchoicePage} from "../pages/confirmchoice/confirmchoice";
-import {InfoPage} from "../pages/info/info";
-import {Firebase} from "../providers/firebase";
-
+import { DelieveryPage } from '../pages/delievery/delievery';
+import { InquiryPage } from '../pages/inquiry/inquiry';
+import { CaketypesPage } from '../pages/caketypes/caketypes';
+import { ConfirmchoicePage } from '../pages/confirmchoice/confirmchoice';
+import { InfoPage } from '../pages/info/info';
+import { Firebase } from '../providers/firebase';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
+import { BrowserModule } from '@angular/platform-browser';
+import { HttpModule } from '@angular/http';
+import { Camera } from '@ionic-native/camera';
 @NgModule({
   declarations: [
     MyApp,
@@ -24,6 +28,8 @@ import {Firebase} from "../providers/firebase";
     InfoPage
   ],
   imports: [
+    BrowserModule,
+    HttpModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
@@ -38,6 +44,12 @@ import {Firebase} from "../providers/firebase";
     ConfirmchoicePage,
     InfoPage
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Firebase]
+  providers: [
+    StatusBar,
+    SplashScreen,
+    Camera,
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    Firebase
+  ]
 })
 export class AppModule {}
