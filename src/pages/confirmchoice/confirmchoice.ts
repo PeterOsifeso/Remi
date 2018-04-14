@@ -2,12 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
 import { Firebase } from '../../providers/firebase';
 import { Camera } from '@ionic-native/camera';
-/*
-  Generated class for the Confirmchoice page.
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 @Component({
   selector: 'page-confirmchoice',
   templateUrl: 'confirmchoice.html'
@@ -105,7 +100,7 @@ export class ConfirmchoicePage {
     prompt.present();
   }
   addPic(){
-    var cameraOptions = {
+    const cameraOptions = {
       quality: 50,
       destinationType: 0,
       sourceType: 0,
